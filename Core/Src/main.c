@@ -70,6 +70,7 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	const int Segment[10] = {0x3, 0x9F, 0x25, 0xD, 0x99, 0x49, 0x41, 0x1F, 0x1, 0x9 };
+	int output = 0;
 
   /* USER CODE END 1 */
 
@@ -95,7 +96,7 @@ int main(void)
   MX_USB_PCD_Init();
   /* USER CODE BEGIN 2 */
 
-
+  HAL_GPIO_WritePin(GPIOC, LED_Pin, SET);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -105,8 +106,8 @@ int main(void)
 
 	  HAL_GPIO_WritePin(GPIOB, 0xFFFF, RESET);
 	  HAL_Delay(1000);
-	  HAL_GPIO_WritePin(GPIOB, Segment[0], SET);
-	  HAL_GPIO_WritePin(GPIOB, Segment[1] << 8, SET);
+	  output = (Segment[0]<<8) + Segment[1];
+	  HAL_GPIO_WritePin(GPIOB, output, SET);
 	  HAL_Delay(1000);
 
 
