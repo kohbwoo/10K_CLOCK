@@ -107,7 +107,8 @@ int main(void)
 	  HAL_GPIO_WritePin(GPIOB, 0xFFFF, RESET);
 	  HAL_Delay(1000);
 	  output = (Segment[0]<<8) + Segment[1];
-	  HAL_GPIO_WritePin(GPIOB, output, SET);
+	  HAL_GPIO_WritePin(GPIOB, DB0_Pin|DB1_Pin|DB2_Pin|DB3_Pin|DB4_Pin|DB5_Pin|DB6_Pin|DB7_Pin, SET);
+
 	  HAL_Delay(1000);
 
 
