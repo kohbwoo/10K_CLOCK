@@ -112,15 +112,18 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  HAL_GPIO_WritePin(OE_GPIO_Port, OE_Pin, SET);
 
-//	  HAL_GPIO_WritePin(GPIOB, 0xFFFF, RESET);
+//	  HAL_GPIO_WritePin(GPIOB, 0xFFFF, RESET);8
 //	  HAL_Delay(1000);
 //	  output = (Segment[0]<<8) + Segment[1];
 //	  HAL_GPIO_WritePin(GPIOB, DB0_Pin|DB1_Pin|DB2_Pin|DB3_Pin|DB4_Pin|DB5_Pin|DB6_Pin|DB7_Pin, SET);
 //
 //	  HAL_Delay(1000);
+	  HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH0_Pin, SET);
 	  if (timer_Check > 0){
-		  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+		  HAL_GPIO_TogglePin(DB0_GPIO_Port, DB0_Pin);
+		  HAL_GPIO_TogglePin(LATCH0_GPIO_Port, LATCH0_Pin);
 		  timer_Check  = 0;
 	  }
 
