@@ -104,28 +104,49 @@ int main(void)
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim2);//타이머 활성화
-
+  HAL_GPIO_WritePin(OE_GPIO_Port, OE_Pin, RESET);
   HAL_GPIO_WritePin(GPIOC, LED_Pin, SET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, SET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, SET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, SET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, SET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, SET);
+  HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH0_Pin, SET);
+//  HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH0_Pin, SET);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
   while (1)
   {
-	  HAL_GPIO_WritePin(OE_GPIO_Port, OE_Pin, SET);
+
 
 //	  HAL_GPIO_WritePin(GPIOB, 0xFFFF, RESET);8
 //	  HAL_Delay(1000);
 //	  output = (Segment[0]<<8) + Segment[1];
 //	  HAL_GPIO_WritePin(GPIOB, DB0_Pin|DB1_Pin|DB2_Pin|DB3_Pin|DB4_Pin|DB5_Pin|DB6_Pin|DB7_Pin, SET);
 //
-//	  HAL_Delay(1000);
-	  HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH0_Pin, SET);
-	  if (timer_Check > 0){
-		  HAL_GPIO_TogglePin(DB0_GPIO_Port, DB0_Pin);
-		  HAL_GPIO_TogglePin(LATCH0_GPIO_Port, LATCH0_Pin);
-		  timer_Check  = 0;
-	  }
+	  HAL_Delay(100);
+	  HAL_GPIO_TogglePin(DB0_GPIO_Port, DB0_Pin);
+	  HAL_GPIO_TogglePin(DB2_GPIO_Port, DB1_Pin);
+	  HAL_GPIO_TogglePin(DB2_GPIO_Port, DB2_Pin);
+
+	  HAL_GPIO_TogglePin(DB2_GPIO_Port, DB3_Pin);
+	  HAL_GPIO_TogglePin(LATCH0_GPIO_Port, LATCH0_Pin);
+	  HAL_GPIO_TogglePin(OE_GPIO_Port, OE_Pin);
+//
+//	  if (timer_Check > 0){
+//		  HAL_GPIO_TogglePin(DB0_GPIO_Port, DB0_Pin);
+//		  HAL_GPIO_TogglePin(DB2_GPIO_Port, DB1_Pin);
+//		  HAL_GPIO_TogglePin(DB2_GPIO_Port, DB2_Pin);
+//
+//		  HAL_GPIO_TogglePin(DB2_GPIO_Port, DB3_Pin);
+//		  HAL_GPIO_TogglePin(LATCH0_GPIO_Port, LATCH0_Pin);
+//		  HAL_GPIO_TogglePin(OE_GPIO_Port, OE_Pin);
+//
+//		  timer_Check  = 0;
+//	  }
 
 
     /* USER CODE END WHILE */
