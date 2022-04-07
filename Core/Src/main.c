@@ -104,8 +104,8 @@ int main(void)
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */-
   HAL_TIM_Base_Start_IT(&htim2);//타이머 활성화
-  HAL_GPIO_WritePin(OE_GPIO_Port, OE_Pin, RESET);//LOW출력
-  HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH0_Pin, SET);//HIGH 출력
+  HAL_GPIO_WritePin(OE_GPIO_Port, OE_Pin, SET);//LOW출력
+  HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH0_Pin, RESET);//HIGH 출력
   HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH1_Pin, SET);
   HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH2_Pin, SET);
   HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH3_Pin, SET);
@@ -125,9 +125,10 @@ int main(void)
 //	  output = (Segment[0]<<8) + Segment[1];
 //	  HAL_GPIO_WritePin(GPIOB, DB0_Pin|DB1_Pin|DB2_Pin|DB3_Pin|DB4_Pin|DB5_Pin|DB6_Pin|DB7_Pin, SET);
 //
-	  HAL_Delay(100);
+
 	  //HAL_GPIO_TogglePin(LATCH0_GPIO_Port, LATCH0_Pin);
 	  //HAL_GPIO_TogglePin(OE_GPIO_Port, OE_Pin);
+
 	  HAL_GPIO_TogglePin(GPIOB, DB0_Pin);
 	  HAL_GPIO_TogglePin(GPIOB, DB1_Pin);
 	  HAL_GPIO_TogglePin(GPIOB, DB2_Pin);
@@ -144,6 +145,7 @@ int main(void)
 	  HAL_GPIO_TogglePin(GPIOB, DB13_Pin);
 	  HAL_GPIO_TogglePin(GPIOB, DB14_Pin);
 	  HAL_GPIO_TogglePin(GPIOB, DB15_Pin);
+	  HAL_Delay(1000);
 
 
 //
