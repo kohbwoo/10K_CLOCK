@@ -102,14 +102,14 @@ int main(void)
   MX_USB_PCD_Init();
   MX_TIM2_Init();
   MX_RTC_Init();
-  /* USER CODE BEGIN 2 */-
+  /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim2);//타이머 활성화
   HAL_GPIO_WritePin(OE_GPIO_Port, OE_Pin, SET);//LOW출력
   HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH0_Pin, RESET);//HIGH 출력
-  HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH1_Pin, SET);
-  HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH2_Pin, SET);
-  HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH3_Pin, SET);
-  HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH4_Pin, SET);
+  HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH1_Pin, RESET);
+  HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH2_Pin, RESET);
+  HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH3_Pin, RESET);
+  HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH4_Pin, RESET);
 
   /* USER CODE END 2 */
 
@@ -129,23 +129,31 @@ int main(void)
 	  //HAL_GPIO_TogglePin(LATCH0_GPIO_Port, LATCH0_Pin);
 	  //HAL_GPIO_TogglePin(OE_GPIO_Port, OE_Pin);
 
-	  HAL_GPIO_TogglePin(GPIOB, DB0_Pin);
-	  HAL_GPIO_TogglePin(GPIOB, DB1_Pin);
-	  HAL_GPIO_TogglePin(GPIOB, DB2_Pin);
-	  HAL_GPIO_TogglePin(GPIOB, DB3_Pin);
-	  HAL_GPIO_TogglePin(GPIOB, DB4_Pin);
-	  HAL_GPIO_TogglePin(GPIOB, DB5_Pin);
-	  HAL_GPIO_TogglePin(GPIOB, DB6_Pin);
-	  HAL_GPIO_TogglePin(GPIOB, DB7_Pin);
-	  HAL_GPIO_TogglePin(GPIOB, DB8_Pin);
-	  HAL_GPIO_TogglePin(GPIOB, DB9_Pin);
-	  HAL_GPIO_TogglePin(GPIOB, DB10_Pin);
-	  HAL_GPIO_TogglePin(GPIOB, DB11_Pin);
-	  HAL_GPIO_TogglePin(GPIOB, DB12_Pin);
-	  HAL_GPIO_TogglePin(GPIOB, DB13_Pin);
-	  HAL_GPIO_TogglePin(GPIOB, DB14_Pin);
-	  HAL_GPIO_TogglePin(GPIOB, DB15_Pin);
-	  HAL_Delay(1000);
+//	  for (int i = 0; i < 0xffff; i++){
+//		  HAL_GPIO_WritePin(GPIOB, i, SET);
+//		  HAL_GPIO_WritePin(GPIOB, ~i, RESET);
+//		  HAL_Delay(1);
+//	  }
+	  int Segment[10] = { 0xC0, 0xF9, 0xA4 ,0xB0, 0x99, 0x92, 0x82, 0xD8, 0x80, 0x90};
+
+
+	  int testPCB_Latch_Adrr[5] = {0x20, 0x40, 0x80, 0x100, 0x8000};
+
+	  for(int j = 0; j < 5; j++){
+		  HAL_GPIO_WritePin(OE_GPIO_Port, testPCB_Latch_Adrr[j], SET);
+
+		  	  for(int i = 0; i < 10; i++){
+		  		  HAL_GPIO_WritePin(GPIOB, Segment[i]+(Segment[i]<<8), SET);
+		  		  HAL_GPIO_WritePin(GPIOB, ~(Segment[i]+(Segment[i]<<8)), RESET);
+		  		  HAL_Delay(100);
+
+		  	  }
+		  HAL_GPIO_WritePin(OE_GPIO_Port, testPCB_Latch_Adrr[j], RESET);
+
+	  }
+
+
+
 
 
 //
@@ -395,7 +403,8 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, LATCH0_Pin|LATCH1_Pin|LATCH2_Pin|LATCH3_Pin
-                          |LATCH4_Pin|OE_Pin, GPIO_PIN_RESET);
+                          |LATCH4_Pin|OE_Pin|SW0_Pin|SW1_Pin
+                          |SW2_Pin|SW3_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, DB0_Pin|DB1_Pin|DB2_Pin|DB10_Pin
@@ -411,18 +420,14 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(LED_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LATCH0_Pin LATCH1_Pin LATCH2_Pin LATCH3_Pin
-                           LATCH4_Pin OE_Pin */
+                           LATCH4_Pin OE_Pin SW0_Pin SW1_Pin
+                           SW2_Pin SW3_Pin */
   GPIO_InitStruct.Pin = LATCH0_Pin|LATCH1_Pin|LATCH2_Pin|LATCH3_Pin
-                          |LATCH4_Pin|OE_Pin;
+                          |LATCH4_Pin|OE_Pin|SW0_Pin|SW1_Pin
+                          |SW2_Pin|SW3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : PA6 PA7 PA8 PA15 */
-  GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_15;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : DB0_Pin DB1_Pin DB2_Pin DB10_Pin
