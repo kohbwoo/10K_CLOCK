@@ -78,6 +78,9 @@ int main(void)
 	//const int Segment[10] = {0x3, 0x9F, 0x25, 0xD, 0x99, 0x49, 0x41, 0x1F, 0x1, 0x9 };
 	//int output = 0;
 
+
+  int time = 0;
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -134,27 +137,34 @@ int main(void)
 //		  HAL_GPIO_WritePin(GPIOB, ~i, RESET);
 //		  HAL_Delay(1);
 //	  }
-	  int Segment[10] = { 0xC0, 0xF9, 0xA4 ,0xB0, 0x99, 0x92, 0x82, 0xD8, 0x80, 0x90};
 
 
-	  int testPCB_Latch_Adrr[5] = {0x20, 0x40, 0x80, 0x100, 0x8000};
 
-	  for(int j = 0; j < 5; j++){
-		  HAL_GPIO_WritePin(OE_GPIO_Port, testPCB_Latch_Adrr[j], SET);
 
-		  	  for(int i = 0; i < 10; i++){
-		  		  HAL_GPIO_WritePin(GPIOB, Segment[i]+(Segment[i]<<8), SET);
-		  		  HAL_GPIO_WritePin(GPIOB, ~(Segment[i]+(Segment[i]<<8)), RESET);
-		  		  HAL_Delay(100);
 
-		  	  }
-		  HAL_GPIO_WritePin(OE_GPIO_Port, testPCB_Latch_Adrr[j], RESET);
+
+	  int Segment[10] = { 0xC0, 0xF9, 0xA4 ,0xB0, 0x99, 0x92, 0x82, 0xD8, 0x80, 0x90}; //16진수 -> segmen 정보
+	  int testPCB_Latch_Adrr[5] = {0x20, 0x40, 0x80, 0x100, 0x8000}; //테스트 pcb 래치 핀 주소
+
+	  int Segment_Output[10] = {0,1,2,3,4,5,6,7,8,9};
+
+
+
+
+	  for(int i = 0; i < 10; i++){
+		  for(int j = 0; j <5; j++){
+			  HAL_GPIO_WritePin(OE_GPIO_Port, testPCB_Latch_Adrr[j], SET);
+			  HAL_GPIO_WritePin(GPIOB, Segment_Output[Segment[i]]+(Segment_Output[Segment[i]]<<8), SET);
+			  HAL_GPIO_WritePin(GPIOB, ~(Segment_Output[Segment[i]]+(Segment_Output[Segment[i]]<<8)), RESET);
+			  HAL_GPIO_WritePin(OE_GPIO_Port, testPCB_Latch_Adrr[j], RESET);
+
+		  }
+
+
 
 	  }
-
-
-
-
+	  HAL_Delay(100);
+	  time += 1;
 
 //
 //	  if (timer_Check > 0){
