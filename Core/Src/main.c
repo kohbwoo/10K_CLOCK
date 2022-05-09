@@ -3,7 +3,7 @@
   ******************************************************************************
   * @file           : main.c
   * @brief          : Main program body
-  ******************************************************************************
+  *****************************************************************************
   * @attention
   *
   * <h2><center>&copy; Copyright (c) 2022 STMicroelectronics.
@@ -107,7 +107,7 @@ int main(void)
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim2);//타이머 활성화
-  HAL_GPIO_WritePin(OE_GPIO_Port, OE_Pin, SET);//LOW출력
+  HAL_GPIO_WritePin(OE_GPIO_Port, OE_Pin, RESET);//LOW출력
   HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH0_Pin, RESET);//HIGH 출력
   HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH1_Pin, RESET);
   HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH2_Pin, RESET);
@@ -144,7 +144,7 @@ int main(void)
 
 
 	  int Segment[10] = { 0xC0, 0xF9, 0xA4 ,0xB0, 0x99, 0x92, 0x82, 0xD8, 0x80, 0x90}; //16진수 -> segmen 정보
-	  int testPCB_Latch_Adrr[5] = {0x20, 0x40, 0x80, 0x100, 0x8000}; //테스트 pcb 래치 핀 주소
+	  int testPCB_Latch_Adrr[5] = {LATCH0_Pin, LATCH1_Pin, LATCH2_Pin, LATCH3_Pin, LATCH4_Pin}; //테스트 pcb 래치 핀 주소
 
 	  int Segment_Output[10] = {0,1,2,3,4,5,6,7,8,9};
 
