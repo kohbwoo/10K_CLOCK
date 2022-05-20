@@ -49,7 +49,7 @@ UART_HandleTypeDef huart1;
 PCD_HandleTypeDef hpcd_USB_FS;
 
 /* USER CODE BEGIN PV */
-char timer_Check = 0;//1us 타이머 동작 체크
+int num[5] = {15,5,25,00,00};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -77,9 +77,6 @@ int main(void)
   /* USER CODE BEGIN 1 */
 	//const int Segment[10] = {0x3, 0x9F, 0x25, 0xD, 0x99, 0x49, 0x41, 0x1F, 0x1, 0x9 };
 	//int output = 0;
-
-
-  int time = 0;
 
   /* USER CODE END 1 */
 
@@ -114,6 +111,7 @@ int main(void)
   HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH3_Pin, RESET);
   HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH4_Pin, RESET);
 
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -122,22 +120,23 @@ int main(void)
   while (1)
   {
 
+	  if (num[1] == 60){
+		  num[1] = 0;
+		  num[0]++;
+	  }
+	  if (num[2] == 60){
+		  num[2] = 0;
+		  num[1]++;
+	  }
+	  if(num[4] == 100){
 
-//	  HAL_GPIO_WritePin(GPIOB, 0xFFFF, RESET);8
-//	  HAL_Delay(1000);
-//	  output = (Segment[0]<<8) + Segment[1];
-//	  HAL_GPIO_WritePin(GPIOB, DB0_Pin|DB1_Pin|DB2_Pin|DB3_Pin|DB4_Pin|DB5_Pin|DB6_Pin|DB7_Pin, SET);
-//
-
-	  //HAL_GPIO_TogglePin(LATCH0_GPIO_Port, LATCH0_Pin);
-	  //HAL_GPIO_TogglePin(OE_GPIO_Port, OE_Pin);
-
-//	  for (int i = 0; i < 0xffff; i++){
-//		  HAL_GPIO_WritePin(GPIOB, i, SET);
-//		  HAL_GPIO_WritePin(GPIOB, ~i, RESET);
-//		  HAL_Delay(1);
-//	  }
-
+		  num[4] = 0;
+		  num[3]++;
+	  }
+	  if(num[3] == 100){
+		  num[3] = 0;
+		  num[2]++;
+	  }
 
 
 
@@ -146,31 +145,19 @@ int main(void)
 	  int Segment[10] = { 0xC0, 0xF9, 0xA4 ,0xB0, 0x99, 0x92, 0x82, 0xD8, 0x80, 0x90}; //16진수 -> segmen 정보
 	  int testPCB_Latch_Adrr[5] = {LATCH0_Pin, LATCH1_Pin, LATCH2_Pin, LATCH3_Pin, LATCH4_Pin}; //테스트 pcb 래치 핀 주소
 
-	  int Segment_Output[10] = {0,1,2,3,4,5,6,7,8,9};
 
 
 
 
-	  for(int i = 0; i < 10; i++){
-		  for(int j = 0; j <5; j++){
-			  HAL_GPIO_WritePin(OE_GPIO_Port, testPCB_Latch_Adrr[j], SET);
-			  HAL_GPIO_WritePin(GPIOB, Segment_Output[Segment[i]]+(Segment_Output[Segment[i]]<<8), SET);
-			  HAL_GPIO_WritePin(GPIOB, ~(Segment_Output[Segment[i]]+(Segment_Output[Segment[i]]<<8)), RESET);
-			  HAL_GPIO_WritePin(OE_GPIO_Port, testPCB_Latch_Adrr[j], RESET);
-
-		  }
+	  for(int i = 0; i < 5; i++){
+		  HAL_GPIO_WritePin(GPIOB, Segment[num[i]/10]+(Segment[num[i]%10]<<8), SET);
+		  HAL_GPIO_WritePin(GPIOB, ~(Segment[num[i]/10]+(Segment[num[i]%10]<<8)), RESET);
+		  HAL_GPIO_WritePin(OE_GPIO_Port, testPCB_Latch_Adrr[i], SET);
 
 
-
+		  HAL_GPIO_WritePin(OE_GPIO_Port, testPCB_Latch_Adrr[i], RESET);
 	  }
-	  HAL_Delay(100);
-	  time += 1;
 
-//
-//	  if (timer_Check > 0){
-//
-//		  timer_Check  = 0;
-//	  }
 
 
     /* USER CODE END WHILE */
@@ -305,7 +292,7 @@ static void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 10-1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 360-1;
+  htim2.Init.Period = 720-1;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
@@ -459,7 +446,7 @@ static void MX_GPIO_Init(void)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim -> Instance == TIM2){
-		++timer_Check;
+		num[4]++;
 
 	}
 
