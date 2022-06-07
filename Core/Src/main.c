@@ -49,7 +49,11 @@ UART_HandleTypeDef huart1;
 PCD_HandleTypeDef hpcd_USB_FS;
 
 /* USER CODE BEGIN PV */
-int num[5] = {15,5,25,00,00};
+int num[5] = {10,30,25,00,00};
+uint8_t rx1_data[8];
+char new_rx = 0;
+uint8_t uart_Time[8];
+char now_see = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -59,6 +63,7 @@ static void MX_USART1_UART_Init(void);
 static void MX_USB_PCD_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_RTC_Init(void);
+static void MX_NVIC_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -102,6 +107,9 @@ int main(void)
   MX_USB_PCD_Init();
   MX_TIM2_Init();
   MX_RTC_Init();
+
+  /* Initialize interrupts */
+  MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim2);//타이머 활성화
   HAL_GPIO_WritePin(OE_GPIO_Port, OE_Pin, RESET);//LOW출력
@@ -112,6 +120,7 @@ int main(void)
   HAL_GPIO_WritePin(LATCH0_GPIO_Port, LATCH4_Pin, RESET);
 
 
+  HAL_UART_Receive_IT(&huart1, &rx1_data, 8);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -119,6 +128,26 @@ int main(void)
 
   while (1)
   {
+	  if (rx1_data[7] == 'E'){
+		  for(int i  = 0; i < 8; i++){
+			  uart_Time[i] = rx1_data[i]-48;
+			  rx1_data[i] = 0;
+		  }
+
+
+		  num[0] = uart_Time[1]*10+uart_Time[2];
+		  num[1] = uart_Time[3]*10+uart_Time[4];
+		  num[2] = uart_Time[5]*10+uart_Time[6];
+		  num[4] = 0;
+		  num[5] = 0;
+
+	  }
+
+
+
+	  if (num[0] > 23){
+		  num[0] = 0;
+	  }
 
 	  if (num[1] == 60){
 		  num[1] = 0;
@@ -148,14 +177,19 @@ int main(void)
 
 
 
-
 	  for(int i = 0; i < 5; i++){
 		  HAL_GPIO_WritePin(GPIOB, Segment[num[i]/10]+(Segment[num[i]%10]<<8), SET);
+
+
 		  HAL_GPIO_WritePin(GPIOB, ~(Segment[num[i]/10]+(Segment[num[i]%10]<<8)), RESET);
+		  HAL_GPIO_WritePin(GPIOB, ~(Segment[num[i]/10]+(Segment[num[i]%10]<<8)), RESET);
+
+		  HAL_GPIO_WritePin(OE_GPIO_Port, testPCB_Latch_Adrr[i], SET);
 		  HAL_GPIO_WritePin(OE_GPIO_Port, testPCB_Latch_Adrr[i], SET);
 
-
 		  HAL_GPIO_WritePin(OE_GPIO_Port, testPCB_Latch_Adrr[i], RESET);
+		  HAL_GPIO_WritePin(OE_GPIO_Port, testPCB_Latch_Adrr[i], RESET);
+
 	  }
 
 
@@ -212,6 +246,23 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief NVIC Configuration.
+  * @retval None
+  */
+static void MX_NVIC_Init(void)
+{
+  /* EXTI15_10_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+  /* EXTI9_5_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+  /* USART1_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(USART1_IRQn);
 }
 
 /**
@@ -400,8 +451,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, LATCH0_Pin|LATCH1_Pin|LATCH2_Pin|LATCH3_Pin
-                          |LATCH4_Pin|OE_Pin|SW0_Pin|SW1_Pin
-                          |SW2_Pin|SW3_Pin, GPIO_PIN_RESET);
+                          |LATCH4_Pin|OE_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, DB0_Pin|DB1_Pin|DB2_Pin|DB10_Pin
@@ -417,14 +467,18 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(LED_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LATCH0_Pin LATCH1_Pin LATCH2_Pin LATCH3_Pin
-                           LATCH4_Pin OE_Pin SW0_Pin SW1_Pin
-                           SW2_Pin SW3_Pin */
+                           LATCH4_Pin OE_Pin */
   GPIO_InitStruct.Pin = LATCH0_Pin|LATCH1_Pin|LATCH2_Pin|LATCH3_Pin
-                          |LATCH4_Pin|OE_Pin|SW0_Pin|SW1_Pin
-                          |SW2_Pin|SW3_Pin;
+                          |LATCH4_Pin|OE_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : SW0_Pin SW1_Pin */
+  GPIO_InitStruct.Pin = SW0_Pin|SW1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : DB0_Pin DB1_Pin DB2_Pin DB10_Pin
@@ -440,6 +494,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : SW2_Pin SW3_Pin */
+  GPIO_InitStruct.Pin = SW2_Pin|SW3_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
 }
 
 /* USER CODE BEGIN 4 */
@@ -447,11 +507,42 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim -> Instance == TIM2){
 		num[4]++;
-
 	}
 
 
 }
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+
+	if (GPIO_Pin == GPIO_PIN_15){
+		num[0]++;
+
+	}
+
+	if (GPIO_Pin == GPIO_PIN_8){
+			num[0]--;
+	}
+	if (GPIO_Pin == GPIO_PIN_7){
+				num[1]++;
+	}
+
+	if (GPIO_Pin == GPIO_PIN_6){
+				num[1]--;
+	}
+
+	UNUSED(GPIO_Pin);
+
+}
+
+void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart)
+{
+	if(huart -> Instance == USART3){
+
+		HAL_UART_Receive_IT(&huart1, &rx1_data, 8);
+
+	}
+}
+
 /* USER CODE END 4 */
 
 /**

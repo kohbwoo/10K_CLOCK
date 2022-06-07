@@ -74,8 +74,10 @@ void Error_Handler(void);
 #define OE_GPIO_Port GPIOA
 #define SW0_Pin GPIO_PIN_6
 #define SW0_GPIO_Port GPIOA
+#define SW0_EXTI_IRQn EXTI9_5_IRQn
 #define SW1_Pin GPIO_PIN_7
 #define SW1_GPIO_Port GPIOA
+#define SW1_EXTI_IRQn EXTI9_5_IRQn
 #define DB0_Pin GPIO_PIN_0
 #define DB0_GPIO_Port GPIOB
 #define DB1_Pin GPIO_PIN_1
@@ -96,12 +98,14 @@ void Error_Handler(void);
 #define DB15_GPIO_Port GPIOB
 #define SW2_Pin GPIO_PIN_8
 #define SW2_GPIO_Port GPIOA
+#define SW2_EXTI_IRQn EXTI9_5_IRQn
 #define UART_TX_Pin GPIO_PIN_9
 #define UART_TX_GPIO_Port GPIOA
 #define UART_RX_Pin GPIO_PIN_10
 #define UART_RX_GPIO_Port GPIOA
 #define SW3_Pin GPIO_PIN_15
 #define SW3_GPIO_Port GPIOA
+#define SW3_EXTI_IRQn EXTI15_10_IRQn
 #define DB3_Pin GPIO_PIN_3
 #define DB3_GPIO_Port GPIOB
 #define DB4_Pin GPIO_PIN_4

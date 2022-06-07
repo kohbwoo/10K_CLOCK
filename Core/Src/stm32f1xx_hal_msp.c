@@ -73,6 +73,9 @@ void HAL_MspInit(void)
   /* System interrupt init*/
 
   /* Peripheral interrupt init */
+  /* PVD_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(PVD_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(PVD_IRQn);
   /* RCC_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(RCC_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(RCC_IRQn);
@@ -104,6 +107,9 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
     __HAL_RCC_BKP_CLK_ENABLE();
     /* Peripheral clock enable */
     __HAL_RCC_RTC_ENABLE();
+    /* RTC interrupt Init */
+    HAL_NVIC_SetPriority(RTC_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(RTC_IRQn);
   /* USER CODE BEGIN RTC_MspInit 1 */
 
   /* USER CODE END RTC_MspInit 1 */
@@ -126,6 +132,9 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* hrtc)
   /* USER CODE END RTC_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_RTC_DISABLE();
+
+    /* RTC interrupt DeInit */
+    HAL_NVIC_DisableIRQ(RTC_IRQn);
   /* USER CODE BEGIN RTC_MspDeInit 1 */
 
   /* USER CODE END RTC_MspDeInit 1 */
@@ -212,7 +221,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 
     GPIO_InitStruct.Pin = UART_RX_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
     HAL_GPIO_Init(UART_RX_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN USART1_MspInit 1 */
@@ -244,6 +253,8 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
     */
     HAL_GPIO_DeInit(GPIOA, UART_TX_Pin|UART_RX_Pin);
 
+    /* USART1 interrupt DeInit */
+    HAL_NVIC_DisableIRQ(USART1_IRQn);
   /* USER CODE BEGIN USART1_MspDeInit 1 */
 
   /* USER CODE END USART1_MspDeInit 1 */
